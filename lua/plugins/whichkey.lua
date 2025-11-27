@@ -7,7 +7,6 @@ return {
 
     wk.setup()
 
-    -- IMPORTANT: use wk.add for new-style specs
     wk.add({
 
       -- Groups
@@ -17,7 +16,18 @@ return {
       { "<leader>w", group = "[W]indow / Splits" },
 
       -- Edit configs
-      { "<leader>ev", "<cmd>e $MYVIMRC<CR>", desc = "[V]imrc/Config" },
+      {
+        "<leader>ev",
+        function()
+            vim.cmd("edit $MYVIMRC")
+            local current_file_dir = vim.fn.expand('%:p:h')
+            require('nvim-tree.api').tree.change_root(current_file_dir)
+            vim.defer_fn(function()
+                vim.cmd("NvimTreeFindFile")
+            end, 100)
+        end,
+        desc = "[V]imrc/Config"
+      },
 
       -- Telescope
       { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "[F]iles" },
